@@ -19,7 +19,7 @@ import time
 #import pickle
 import dill as pickle
 
-from numba import njit, prange
+#from numba import njit, prange
 import concurrent.futures
 
 from tqdm.notebook import tqdm

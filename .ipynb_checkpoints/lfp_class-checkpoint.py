@@ -1,33 +1,10 @@
 import numpy as np
 import pandas as pd
-
-#!pip install pyEDFlib
-import pyedflib
-#!pip install ipympl
-
 from scipy.fftpack import fft, ifft, fftfreq
-from scipy import signal as sg
-from scipy.ndimage.filters import gaussian_filter1d, gaussian_filter
-from scipy.stats import binned_statistic, entropy, norm
-from statsmodels.stats.multitest import multipletests
-import statsmodels.api as sm
-from sklearn.linear_model import LinearRegression
-
-import sys
-import os
-import time
-#import pickle
+from scipy import signal
 import dill as pickle
-
-import concurrent.futures
-from numba import njit, prange
-
 from tqdm.notebook import tqdm
-from collections import defaultdict
-import itertools
-
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 class LFP:
 
@@ -113,7 +90,7 @@ class LFP:
                                       'scaling': 'density'}):
         if welch_kwargs['nperseg'] is None:
             welch_kwargs['nperseg'] = self.sf * 1
-        x, y = sg.welch(self.data, self.sf, **welch_kwargs)
+        x, y = signal.welch(self.data, self.sf, **welch_kwargs)
         if smooth:
             y = gaussian_filter1d(y, sigma=sigma)
         return x, y
@@ -156,36 +133,36 @@ class LFP:
     def bp_filter(self, low_freq, high_freq, inplace=False, filter_order=4, set_name=False):
         Wn1 = low_freq / (self.sf/2) # Нормируем частоты относительно часототы дискретизации
         Wn2 = high_freq / (self.sf/2)
-        # b, a = sg.iirfilter(N=filter_order, Wn=[Wn1, Wn2], btype='bandpass', ftype='butter')
-        b, a = sg.butter(N=filter_order, Wn=[Wn1, Wn2], btype='band')
+        # b, a = signal.iirfilter(N=filter_order, Wn=[Wn1, Wn2], btype='bandpass', ftype='butter')
+        b, a = signal.butter(N=filter_order, Wn=[Wn1, Wn2], btype='band')
         if inplace:
-            self.data = sg.filtfilt(b, a, self.data)
+            self.data = signal.filtfilt(b, a, self.data)
         new_name = self.name
         if set_name:
             new_name = self.name + ", bp-filtered at " + str(low_freq) + "-" + str(high_freq) + "Hz"
-        return LFP(sg.filtfilt(b, a, self.data), self.sf, new_name)
+        return LFP(signal.filtfilt(b, a, self.data), self.sf, new_name)
     
     
     def notch_filter(self, cutoff_freq, Q=50, inplace=False, set_name=False):
         w0 = cutoff_freq/(self.sf/2)
-        b, a = sg.iirnotch(w0, Q)
+        b, a = signal.iirnotch(w0, Q)
         if inplace:
-            self.data = sg.filtfilt(b, a, self.data)
+            self.data = signal.filtfilt(b, a, self.data)
         new_name = self.name
         if set_name:
             new_name = self.name + ", notch-filtered at " + str(cutoff_freq)
-        return LFP(sg.filtfilt(b, a, self.data), self.sf, new_name)
+        return LFP(signal.filtfilt(b, a, self.data), self.sf, new_name)
     
     
     def lp_filter(self, high_freq, inplace=False, filter_order=4, set_name=False):
         w0 = high_freq/(self.sf/2)
-        b, a = sg.iirfilter(N=filter_order, Wn=high_freq, btype='lowpass', fs=self.sf)
+        b, a = signal.iirfilter(N=filter_order, Wn=high_freq, btype='lowpass', fs=self.sf)
         if inplace:
-            self.data = sg.filtfilt(b, a, self.data)
+            self.data = signal.filtfilt(b, a, self.data)
         new_name = self.name
         if set_name:
             new_name = self.name + "lp-filtered at " + str(high_freq) + "Hz"
-        return LFP(sg.filtfilt(b, a, self.data), self.sf, new_name)
+        return LFP(signal.filtfilt(b, a, self.data), self.sf, new_name)
     
     
     def remove_50hz_harmonics(self, Q, inplace=False):

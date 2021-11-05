@@ -6,7 +6,7 @@ import pyedflib
 #!pip install ipympl
 
 from scipy.fftpack import fft, ifft, fftfreq
-from scipy import signal as sg
+from scipy import signal
 from scipy.ndimage.filters import gaussian_filter1d, gaussian_filter
 from scipy.stats import binned_statistic, entropy, norm
 from statsmodels.stats.multitest import multipletests
@@ -20,6 +20,7 @@ import time
 import dill as pickle
 
 import concurrent.futures
+from numba import njit, prange
 
 from tqdm.notebook import tqdm
 from collections import defaultdict
@@ -31,12 +32,9 @@ import seaborn as sns
 sns.set(context='notebook', style='darkgrid', palette='deep', font='sans-serif', font_scale=1, color_codes=False, rc=None)
 plt.rcParams['figure.figsize'] = (14, 8)
 
-import sys
 #print("SYS.PATH: ", sys.path[:3])
 #sys.path.insert(0, r"C:\Users\User\[[Python]]\[AlexeyT]\PAC_PROJECT")
 
-sns.set(context='notebook', style='darkgrid', palette='deep', font='sans-serif', font_scale=1, color_codes=False, rc=None)
-plt.rcParams['figure.figsize'] = (14, 8)
 from utility_functions import *
 from lfp_class import LFP
 from pac_class import MyPAC

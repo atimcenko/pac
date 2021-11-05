@@ -1,33 +1,12 @@
 import numpy as np
-import pandas as pd
-
-#!pip install pyEDFlib
-import pyedflib
-#!pip install ipympl
-
 from scipy.fftpack import fft, ifft, fftfreq
 from scipy import signal
-from scipy.ndimage.filters import gaussian_filter1d, gaussian_filter
 from scipy.stats import binned_statistic, entropy, norm
-from statsmodels.stats.multitest import multipletests
-import statsmodels.api as sm
 from sklearn.linear_model import LinearRegression
 
-import sys
-import os
-import time
-#import pickle
 import dill as pickle
-
-import concurrent.futures
 from numba import njit, prange
-
 from tqdm.notebook import tqdm
-from collections import defaultdict
-import itertools
-
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 
 def extract_phase(beta):
