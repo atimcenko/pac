@@ -6,7 +6,7 @@ import pyedflib
 #!pip install ipympl
 
 from scipy.fftpack import fft, ifft, fftfreq
-from scipy import signal
+from scipy import signal as sg
 from scipy.ndimage.filters import gaussian_filter1d, gaussian_filter
 from scipy.stats import binned_statistic, entropy, norm
 from statsmodels.stats.multitest import multipletests
@@ -19,19 +19,20 @@ import time
 #import pickle
 import dill as pickle
 
+#from numba import njit, prange
 import concurrent.futures
-from numba import jit, njit, prange
 
 from tqdm.notebook import tqdm
-from collections import defaultdict
 import itertools
+
+from collections import defaultdict
 
 import matplotlib.pyplot as plt
 import seaborn as sns
 
 from utility_functions import *
-from class_lfp import LFP
-from class_pac import MyPAC
+from lfp_class import LFP
+from pac_class import MyPAC
 
 class Patient:
     
@@ -265,8 +266,6 @@ class Patient:
             data_to_merge = [lfp.data for lfp in lfps_to_merge]
             new_data = np.concatenate(data_to_merge)[:int(total_duration*self.sf)]
             lfp = LFP(new_data, self.sf, self.name, new_condition_name, placement)
-            
-            # too many prints
             verbose = False
             if placement == 'R2A-3A':
                 verbose = True

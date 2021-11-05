@@ -38,9 +38,9 @@ import sys
 sns.set(context='notebook', style='darkgrid', palette='deep', font='sans-serif', font_scale=1, color_codes=False, rc=None)
 plt.rcParams['figure.figsize'] = (14, 8)
 from utility_functions import *
-from class_lfp import LFP
-from class_pac import MyPAC
-from class_patient import Patient
+from lfp_class import LFP
+from pac_class import MyPAC
+from patient_class import Patient
 
 print("Succesfully imported libraries and modules\n")
 
