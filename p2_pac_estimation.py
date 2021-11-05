@@ -102,9 +102,10 @@ def main():
 
     # NON-DIAGONAL ELEMENTS (INTER-ELECTRODE PAC)
     print("Starting estimating inter-electrode PAC")
-    for condition in conditions:
-        for placement_phase in placements:
-            for placement_amplitude in placements:
+
+    for placement_phase in placements:
+        for placement_amplitude in placements:
+            for condition in conditions:
                 
                 # if phase is on the right "R" and ampl is "L" do not calculate PAC
                 if placement_phase[0] != placement_amplitude[0]:
