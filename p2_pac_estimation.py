@@ -38,9 +38,9 @@ import sys
 sns.set(context='notebook', style='darkgrid', palette='deep', font='sans-serif', font_scale=1, color_codes=False, rc=None)
 plt.rcParams['figure.figsize'] = (14, 8)
 from utility_functions import *
-from lfp_class import LFP
-from pac_class import MyPAC
-from patient_class import Patient
+from class_lfp import LFP
+from class_pac import MyPAC
+from class_patient import Patient
 
 print("Succesfully imported libraries and modules\n")
 
@@ -127,6 +127,7 @@ def main():
                 pac.filter_fit_surrogates(lfp_phase, lfp_amplitude, n_surrogates=700, n_splits=1)
                 print(f"Surrogate estimation completed in {round(time.perf_counter() - t0)}")
                 pac.save(p2.root_dir)
+                
 
 if __name__ == '__main__':
     main()

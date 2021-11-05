@@ -6,7 +6,7 @@ import pyedflib
 #!pip install ipympl
 
 from scipy.fftpack import fft, ifft, fftfreq
-from scipy import signal
+from scipy import signal as sg
 from scipy.ndimage.filters import gaussian_filter1d, gaussian_filter
 from scipy.stats import binned_statistic, entropy, norm
 from statsmodels.stats.multitest import multipletests
@@ -30,7 +30,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 from utility_functions import *
-from class_lfp import LFP
+from lfp_class import LFP
 
 class MyPAC:
     
