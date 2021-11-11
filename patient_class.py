@@ -331,7 +331,7 @@ class Patient:
         self.pac[condition][placement_phase][placement_amplitude] = pac_obj
         
         
-    def load_pac(self, filepath=None, condition=None, phase_placement=None, ampl_placement=None, duration=None):
+    def load_pac(self, filepath=None, condition=None, phase_placement=None, ampl_placement=None, duration=None, verbose=True):
         pac_root_dir = os.path.join(self.root_dir, 'pac')
         if filepath is None:
             assert condition is not None, "If filepath is not specified other parameters should be given"
@@ -342,22 +342,20 @@ class Patient:
                                f"{duration} sec"]
             
             filepath = os.path.join(pac_root_dir, '_'.join(name_components) + '.pkl')   
-        print(f"Reading {filepath}") 
+        if verbose: print(f"Reading {filepath}") 
         with open(filepath, 'rb') as _input:
             pac = pickle.load(_input)
-        print("MyPAC object loaded.")
             
         self.pac[condition][phase_placement][ampl_placement] = pac
         
-        print(f"Updated {self.name} pac.[condition][phase_placement][amplitude_placement]")
-        print("Returning loaded pac object")
+        if verbose: print(f"Updated {self.name} pac.[condition][phase_placement][amplitude_placement]")
             
         return pac
     
     
-    def load_all_pacs(self):
+    def load_all_pacs(self, verbose=True):
         for filename in os.listdir(os.path.join(self.root_dir, 'pac')):
-            self.load_pac(os.path.join(self.root_dir, 'pac', filename))
+            self.load_pac(os.path.join(self.root_dir, 'pac', filename), verbose=verbose)
             
               
     def comment(self, comment):
