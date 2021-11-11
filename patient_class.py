@@ -342,11 +342,19 @@ class Patient:
                                f"{duration} sec"]
             
             filepath = os.path.join(pac_root_dir, '_'.join(name_components) + '.pkl')   
-        if verbose: print(f"Reading {filepath}") 
-        with open(filepath, 'rb') as _input:
-            pac = pickle.load(_input)
+            if verbose: print(f"Reading {filepath}") 
+            with open(filepath, 'rb') as _input:
+                pac = pickle.load(_input)
+
+            self.pac[condition][phase_placement][ampl_placement] = pac
             
-        self.pac[condition][phase_placement][ampl_placement] = pac
+        else:
+            # Having filepath read the condition and placements
+            _, condition, phase_placement, ampl_placement, _ = retrieve_pac_name(filepath[:-4]) # without .pkl
+            with open(filepath, 'rb') as _input:
+                pac = pickle.load(_input)
+            self.pac[condition][phase_placement][ampl_placement] = pac
+            
         
         if verbose: print(f"Updated {self.name} pac.[condition][phase_placement][amplitude_placement]")
             
