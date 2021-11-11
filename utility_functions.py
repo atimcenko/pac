@@ -254,9 +254,9 @@ def create_pac_name(lfp_phase, lfp_amplitude):
 def retrieve_pac_name(pac_filename):
     """ Returns patient_name, condition, phase_placement, ampl_placement, duration"""
     comps = pac_filename.split("_")
-    patient_name, condition = comps[0], comps[1]
-    phase_placement, ampl_placement = comps[2], comps[3]
-    duration = comps[4]
+    patient_name, condition = comps[1], comps[2] # 0 stands for PAC
+    phase_placement, ampl_placement = comps[3], comps[4]
+    duration = comps[5][:-4]
     return patient_name, condition, phase_placement, ampl_placement, duration
     
 
