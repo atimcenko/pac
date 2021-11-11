@@ -187,7 +187,6 @@ def shuffle_hfo_matrix(hfo_matrix, n_splits=3):
     return shuffled_hfo_matrix
 
 def generate_coupled_signal(f_p, f_a, K_p, K_a, xi, timepoints, noise_level=0.1, noise_type='pink', alpha=1):
-    
     x_fp = K_p * np.sin(2 * np.pi * f_p * timepoints)
     A_fa = K_a/2 * ((1 - xi) * np.sin(2 * np.pi * f_p * timepoints) + xi + 1)
     x_fa = A_fa * np.sin(2 * np.pi * f_a * timepoints)
@@ -252,4 +251,20 @@ def create_pac_name(lfp_phase, lfp_amplitude):
     name = '_'.join(pac_name_components)
     return name
 
+
+def create_condition_name(day, ldopa, movement):
+    return " ".join([day, ldopa, movement])
+
+
+def retrieve_condition_name(condition):
+    """
+    1Day OFF RH (Com)
+    
+    """
+    name_components = condition.split(" ")
+    day = name_components[0]
+    ldopa = name_components[1]
+    movement = " ".join(name_components[2:])
+    
+    return day, ldopa, movement
 
