@@ -130,9 +130,11 @@ class LFP:
         x, y = self.get_psd(smooth=smooth, sigma=sigma, welch_kwargs=welch_kwargs)
         show_indexes = (x <= show_freqs[1]) * (x >= show_freqs[0])
         
+        title = f"PSD \n {self.patient_name}; {self.condition}"
+        
         if ax is not None:
-            ax.plot(x[show_indexes], y[show_indexes], label=self.name)
-            ax.set_title('PSD')
+            ax.plot(x[show_indexes], y[show_indexes], label=self.placement)
+            ax.set_title(title)
             ax.grid(True)
             ax.legend()
             ax.set_xlabel('Hz')
@@ -141,8 +143,8 @@ class LFP:
                 ax.set_yscale('log')
                 ax.set_ylabel("dB/Hz")
         if ax is None:
-            plt.plot(x[show_indexes], y[show_indexes], label=self.name)
-            plt.title("PSD")
+            plt.plot(x[show_indexes], y[show_indexes], label=self.placement)
+            plt.title(title)
             #plt.grid()
             plt.legend()
             plt.xlabel('Hz')
