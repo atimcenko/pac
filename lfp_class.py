@@ -125,7 +125,7 @@ class LFP:
                                       'noverlap': None, 
                                       'nfft': None, 
                                       'detrend': 'constant', 
-                                      'scaling': 'density'}):
+                                      'scaling': 'density'}, **plt_kwargs):
         
         x, y = self.get_psd(smooth=smooth, sigma=sigma, welch_kwargs=welch_kwargs)
         show_indexes = (x <= show_freqs[1]) * (x >= show_freqs[0])
@@ -133,20 +133,16 @@ class LFP:
         title = f"PSD \n {self.patient_name}; {self.condition}"
         
         if ax is not None:
-            ax.plot(x[show_indexes], y[show_indexes], label=self.placement)
+            ax.plot(x[show_indexes], y[show_indexes], label=self.placement, **plt_kwargs)
             ax.set_title(title)
-            ax.grid(True)
-            ax.legend()
             ax.set_xlabel('Hz')
             ax.set_ylabel("$mV^2/Hz$")
             if log:
                 ax.set_yscale('log')
                 ax.set_ylabel("dB/Hz")
         if ax is None:
-            plt.plot(x[show_indexes], y[show_indexes], label=self.placement)
+            plt.plot(x[show_indexes], y[show_indexes], label=self.placement, **plt_kwargs)
             plt.title(title)
-            #plt.grid()
-            plt.legend()
             plt.xlabel('Hz')
             plt.ylabel("$mV^2/Hz$")
             if log:
