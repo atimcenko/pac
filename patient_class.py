@@ -52,6 +52,7 @@ class Patient:
         self.conditions = set()
         self.condition_durations = {}
         self.placements = set()
+        self.sorted_placements = list() # from 1 to 4, first half - right, then left
         self.comments = set()
         
         self.lfp = defaultdict(dict) # self.lfp[condition][placement]
@@ -166,7 +167,7 @@ class Patient:
                                   (9, 12), (10, 13), (11, 14), \
                                   (12, 13), (13, 14), (14, 12), \
                                   (15, 12), (15, 13), (15, 14)]
-        # 1 - 2a, 1 - 2b, 1 - 3c, abc-pairs, all 2x pairs, 3x pairs, 4-3a, 4-3b, 4-3c
+        # 1-2a, 1-2b, 1-2c, abc-pairs, all 2x pairs, 3x pairs, 4-3a, 4-3b, 4-3c
         print("Started creating bipolar signals")
         print("")
         # CALCULATION STEP
@@ -178,6 +179,7 @@ class Patient:
             bipolar_signals[bip_sig_name] = signals[idx_1] - signals[idx_2]
             print(f"{bip_sig_name} created")
             
+        self.sorted_placements = bip_sig_names
         return bip_sig_names, bipolar_signals
     
     
