@@ -353,13 +353,9 @@ class Patient:
             if verbose: print("There is a filepath! Great")
             if verbose: print(f"Reading {filepath}") 
             filename = os.path.basename(filepath)
-            print(filename)
             _, condition, phase_placement, ampl_placement, _ = retrieve_pac_name(filename) # without .pkl
             with open(filepath, 'rb') as _input:
                 pac = pickle.load(_input)
-            print(condition)
-            print(phase_placement)
-            print(ampl_placement)
             
             self.pac[condition][phase_placement][ampl_placement] = pac
              
@@ -388,13 +384,7 @@ class Patient:
         print(f"Pickling {self.name} without {keys_to_del}")
         for key in keys_to_del:
             del attrs[key]
-        return attrs
-    
-    
-    #def __setstate__(self, d):
-    #    self.__dict__ = d
-    #    self.__dict__['pac'] = defaultdict(lambda: defaultdict(lambda: defaultdict(dict)))
-        
+        return attrs   
             
             
     def save(self, filename=None):
