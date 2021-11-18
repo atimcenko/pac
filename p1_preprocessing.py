@@ -28,15 +28,9 @@ import itertools
 import matplotlib.pyplot as plt
 import seaborn as sns
 #from IPython.display import display
-sns.set(context='notebook', style='darkgrid', palette='deep', font='sans-serif', font_scale=1, color_codes=False, rc=None)
+sns.set(context='notebook', style='ticks', palette='bright', font='sans-serif', font_scale=1, color_codes=True, rc=None)
 plt.rcParams['figure.figsize'] = (14, 8)
 
-import sys
-#print("SYS.PATH: ", sys.path[:3])
-#sys.path.insert(0, r"C:\Users\User\[[Python]]\[AlexeyT]\PAC_PROJECT")
-
-sns.set(context='notebook', style='darkgrid', palette='deep', font='sans-serif', font_scale=1, color_codes=False, rc=None)
-plt.rcParams['figure.figsize'] = (14, 8)
 from utility_functions import *
 from lfp_class import LFP
 from pac_class import MyPAC
