@@ -401,7 +401,7 @@ class MyPAC:
         if self.verbose: print("---PAC estimation completed in {} sec---".format(time_elapsed))
       
     
-    def comodulogram(self, source=None, significant=False, correction='None', smooth=True, sigma=1, vmax=None, ax=None, savefig=False):
+    def comodulogram(self, source=None, pvalues=None, significant=False, correction='None', smooth=True, sigma=1, vmax=None, ax=None, savefig=False):
         
         if source is None:
             pac_matrix = self.pac_matrix.copy()
