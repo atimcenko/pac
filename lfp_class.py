@@ -222,6 +222,11 @@ class LFP:
         self.bp_filter(2, 999, inplace=True)
         
         
+    def copy(self): 
+        lfp = LFP(self.data, self.sf, self.patient_name, self.condition, self.placement)
+        return lfp
+        
+        
     def save(self, patient_dir):
         t = time.time() 
         path = os.path.join(patient_dir, "lfp")
@@ -246,3 +251,5 @@ class LFP:
     def create_name(self):
         self.name = f"LFP_{self.patient_name}_{self.condition}_{self.placement}_{self.duration}"
         return self.name
+    
+    
