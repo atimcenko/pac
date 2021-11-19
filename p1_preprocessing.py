@@ -30,6 +30,8 @@ import seaborn as sns
 #from IPython.display import display
 sns.set(context='notebook', style='ticks', palette='bright', font='sans-serif', font_scale=1, color_codes=True, rc=None)
 plt.rcParams['figure.figsize'] = (14, 8)
+#print("SYS.PATH: ", sys.path[:3])
+#sys.path.insert(0, r"C:\Users\User\[[Python]]\[AlexeyT]\PAC_PROJECT")
 
 from utility_functions import *
 from lfp_class import LFP
@@ -40,7 +42,13 @@ print("Succesfully imported libraries and modules\n")
 
 def main():
     
-    p1 = Patient(name='Patient1', root_dir=r"H:\Alexey_Timchenko\PAC\Patient1")
+    with open("path_data.txt") as f:
+        data_dir = f.readline()
+
+    p1_root_dir = os.path.join(data_dir, "Patient1")
+    
+    p1 = Patient(name='Patient1', root_dir=p1_root_dir)
+    
     files = p1.find_bdf_files()
     for filename in files:
         p1.scan_file_annotations(filename, update_file_conditions=True)
