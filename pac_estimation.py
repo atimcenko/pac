@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 #!pip install pyEDFlib
-import pyedflib
+#import pyedflib
 #!pip install ipympl
 
 from scipy.fftpack import fft, ifft, fftfreq
@@ -87,10 +87,11 @@ def main():
     # first diagonal ones:
 
     # DIAGONAL ELEMENTS (ONE ELECTRODE PAC)
-    for condition in conditions_2use:
-        print("Condition: ", condition)
-        for placement_phase in placements:
-            for placement_amplitude in placements:
+    
+    print("Condition: ", condition)
+    for placement_phase in placements:
+        for placement_amplitude in placements:
+            for condition in conditions_2use:
                 #print(f"Placements: {placement_phase} - {placement_amplitude}")
                 # if phase is on the right "R" and ampl is "L" do not calculate PAC
                 if placement_phase[0] != placement_amplitude[0]:
@@ -122,7 +123,7 @@ def main():
 
     for placement_phase in placements:
         for placement_amplitude in placements:
-            for condition in conditions:
+            for condition in conditions_2use:
                 
                 # if phase is on the right "R" and ampl is "L" do not calculate PAC
                 if placement_phase[0] != placement_amplitude[0]:
