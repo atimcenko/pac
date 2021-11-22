@@ -52,8 +52,7 @@ def main():
 
     p5.display_all_annotations()
     p5.get_preprocessed_lfps(verbose=False)
-    print(p5.conditions)
-    print(p5.sorted_placements)
+
 
     new_condition_name = "1Day OFF Rest 180sec"
     conditions_to_merge = ["1Day OFF Rest (EyesOpen)", "1Day OFF Rest (EyesClosed)"]

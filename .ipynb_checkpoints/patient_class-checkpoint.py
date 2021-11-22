@@ -19,7 +19,7 @@ import time
 #import pickle
 import dill as pickle
 
-#from numba import njit, prange
+from numba import njit, prange
 import concurrent.futures
 
 from tqdm.notebook import tqdm
@@ -331,7 +331,7 @@ class Patient:
         self.pac[condition][placement_phase][placement_amplitude] = pac_obj
         
         
-    def load_pac(self, filepath=None, condition=None, phase_placement=None, ampl_placement=None, duration=None):
+    def load_pac(self, filepath=None, condition=None, phase_placement=None, ampl_placement=None, duration=None, verbose=True):
         pac_root_dir = os.path.join(self.root_dir, 'pac')
         if filepath is None:
             assert condition is not None, "If filepath is not specified other parameters should be given"
@@ -342,22 +342,34 @@ class Patient:
                                f"{duration} sec"]
             
             filepath = os.path.join(pac_root_dir, '_'.join(name_components) + '.pkl')   
-        print(f"Reading {filepath}") 
-        with open(filepath, 'rb') as _input:
-            pac = pickle.load(_input)
-        print("MyPAC object loaded.")
+            if verbose: print(f"Reading {filepath}") 
+            with open(filepath, 'rb') as _input:
+                pac = pickle.load(_input)
+
+            self.pac[condition][phase_placement][ampl_placement] = pac
             
-        self.pac[condition][phase_placement][ampl_placement] = pac
-        
-        print(f"Updated {self.name} pac.[condition][phase_placement][amplitude_placement]")
-        print("Returning loaded pac object")
+        else:
+            # Having filepath read the condition and placements
+            if verbose: print("There is a filepath! Great")
+            if verbose: print(f"Reading {filepath}") 
+            filename = os.path.basename(filepath)
+            print(filename)
+            _, condition, phase_placement, ampl_placement, _ = retrieve_pac_name(filename) # without .pkl
+            with open(filepath, 'rb') as _input:
+                pac = pickle.load(_input)
+            print(condition)
+            print(phase_placement)
+            print(ampl_placement)
             
+            self.pac[condition][phase_placement][ampl_placement] = pac
+             
+        if verbose: print(f"Updated {self.name} pac.[{condition}][{phase_placement}][{ampl_placement}]")   
         return pac
     
     
-    def load_all_pacs(self):
+    def load_all_pacs(self, verbose=True):
         for filename in os.listdir(os.path.join(self.root_dir, 'pac')):
-            self.load_pac(os.path.join(self.root_dir, 'pac', filename))
+            self.load_pac(os.path.join(self.root_dir, 'pac', filename), verbose=verbose)
             
               
     def comment(self, comment):
