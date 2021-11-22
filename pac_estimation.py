@@ -50,7 +50,7 @@ def main():
     patient_number = input("Enter patient number: ")
     patient_name = "Patient" + patient_number
     
-    confirm = input(f"Confirm preprocessing for {patient_name}? y/n: ")
+    confirm = input(f"Confirm PAC estimation for {patient_name}? y/n: ")
     
     if confirm != 'y':
         print("Exiting...")
@@ -87,11 +87,10 @@ def main():
     # first diagonal ones:
 
     # DIAGONAL ELEMENTS (ONE ELECTRODE PAC)
-    
-    print("Condition: ", condition)
     for placement_phase in placements:
         for placement_amplitude in placements:
             for condition in conditions_2use:
+                print("Condition: ", condition)
                 #print(f"Placements: {placement_phase} - {placement_amplitude}")
                 # if phase is on the right "R" and ampl is "L" do not calculate PAC
                 if placement_phase[0] != placement_amplitude[0]:
