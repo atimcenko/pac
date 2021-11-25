@@ -242,7 +242,7 @@ def load_patient_from_pickle(filepath):
     return patient
 
 
-def copy_patient(patient: Patient):
+def copy_patient(patient):
     new_patient = Patient(patient.name, patient.root_dir)
     for attr in patient.__dict__.keys():
         new_patient.__dict__[attr] = patient.__dict__[attr]
@@ -286,7 +286,7 @@ def retrieve_condition_name(condition):
     return day, ldopa, movement
 
 
- def comodulogram(pac_matrix,
+def comodulogram(pac_matrix,
                   beta_params,
                   hfo_params,
                   pvalues=None, 
