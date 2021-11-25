@@ -52,6 +52,8 @@ def main():
     
     confirm = input(f"Confirm PAC estimation for {patient_name}? y/n: ")
     
+    compute_nondiag = input(f"Compute inter-electrode PAC for {patient_name}? y/n: ")
+    
     if confirm != 'y':
         print("Exiting...")
         return
@@ -87,10 +89,10 @@ def main():
     # first diagonal ones:
 
     # DIAGONAL ELEMENTS (ONE ELECTRODE PAC)
-    for placement_phase in placements:
-        for placement_amplitude in placements:
-            for condition in conditions_2use:
-                print("Condition: ", condition)
+    for condition in conditions_2use:
+        print("Condition: ", condition)
+        for placement_phase in placements:
+            for placement_amplitude in placements:
                 #print(f"Placements: {placement_phase} - {placement_amplitude}")
                 # if phase is on the right "R" and ampl is "L" do not calculate PAC
                 if placement_phase[0] != placement_amplitude[0]:
@@ -116,6 +118,10 @@ def main():
                 pac.filter_fit_surrogates(lfp_phase, lfp_amplitude, n_surrogates=700, n_splits=1)
                 print(f"Surrogate estimation completed in {round(time.perf_counter() - t0)}")
                 pac.save(patient.root_dir)
+                
+    if compute_nondiag != 'y':
+        print("Exiting...")
+        return
 
     # NON-DIAGONAL ELEMENTS (INTER-ELECTRODE PAC)
     print("Starting estimating inter-electrode PAC")
