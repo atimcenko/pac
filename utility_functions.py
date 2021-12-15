@@ -359,3 +359,19 @@ def comodulogram(pac_matrix,
     
     return im
 
+
+def lfp_exists(patient, condition, placement):
+    try:
+        patient.lfp[condition][placement]
+    except:
+        return False
+    return True
+
+
+def pac_exists(patient, condition, placement_phase, placement_ampl):
+    try:
+        len(patient.pac[condition][placement_phase][placement_ampl])
+    except:
+        return True # if has not length - not empty - is PAC
+    return False
+
