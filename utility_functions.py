@@ -240,13 +240,6 @@ def load_patient_from_pickle(filepath):
         patient = pickle.load(f, pickle.HIGHEST_PROTOCOL)
     patient.pac = defaultdict(lambda: defaultdict(lambda: defaultdict(dict)))
     return patient
-
-
-def copy_patient(patient):
-    new_patient = Patient(patient.name, patient.root_dir)
-    for attr in patient.__dict__.keys():
-        new_patient.__dict__[attr] = patient.__dict__[attr]
-    return new_patient
         
 
 
