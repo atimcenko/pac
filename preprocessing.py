@@ -71,6 +71,8 @@ def main():
     patient.get_preprocessed_lfps(verbose=False)
     patient.display_all_annotations()
     
+    print(patient.conditions)
+    
     if patient_name == 'Patient1':
         
         new_condition_name = "1Day OFF Rest 180sec"
@@ -347,6 +349,7 @@ def main():
         conditions_to_merge = ["5Day ON " + s for s in ["LH (Com)", "LH (NoCom)", "LH (Hold)", "LH (Pass)"]]
         patient.merge_conditions(conditions_to_merge, new_condition_name, total_duration=180)
         
+        
     if patient_name == 'Patient6':
         
         new_condition_name = "1Day OFF Rest 180sec"
@@ -364,16 +367,16 @@ def main():
 
 
         new_condition_name = "1Day OFF LH Move 180sec"
-        conditions_to_merge = ["1Day OFF " + s for s in ["LH (Com)", "LH (NoCom)", "LH (Hold)", "LH (Pass)"]]
+        conditions_to_merge = ["1Day OFF " + s for s in ["LH (Com)", "LH (NoCom)", "LH (Hold)"]]
         patient.merge_conditions(conditions_to_merge, new_condition_name, total_duration=180)
 
 
         new_condition_name = "1Day ON RH Move 180sec"
-        conditions_to_merge = ["1Day ON " + s for s in ["RH (Com)", "RH (NoCom)", "RH (Hold)", "RH (Pass)"]]
+        conditions_to_merge = ["1Day ON " + s for s in ["RH (Com)", "RH (NoCom)", "RH (Hold)"]]
         patient.merge_conditions(conditions_to_merge, new_condition_name, total_duration=180)
 
         new_condition_name = "1Day ON LH Move 180sec"
-        conditions_to_merge = ["1Day ON " + s for s in ["LH (Com)", "LH (NoCom)", "LH (Hold)", "LH (Pass)"]]
+        conditions_to_merge = ["1Day ON " + s for s in ["LH (Com)", "LH (NoCom)", "LH (Hold)"]]
         patient.merge_conditions(conditions_to_merge, new_condition_name, total_duration=180)
 
 
