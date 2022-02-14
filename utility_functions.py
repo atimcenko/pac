@@ -240,13 +240,6 @@ def load_patient_from_pickle(filepath):
         patient = pickle.load(f, pickle.HIGHEST_PROTOCOL)
     patient.pac = defaultdict(lambda: defaultdict(lambda: defaultdict(dict)))
     return patient
-
-
-def copy_patient(patient: Patient):
-    new_patient = Patient(patient.name, patient.root_dir)
-    for attr in patient.__dict__.keys():
-        new_patient.__dict__[attr] = patient.__dict__[attr]
-    return new_patient
         
 
 
@@ -286,7 +279,7 @@ def retrieve_condition_name(condition):
     return day, ldopa, movement
 
 
- def comodulogram(pac_matrix,
+def comodulogram(pac_matrix,
                   beta_params,
                   hfo_params,
                   pvalues=None, 
@@ -358,4 +351,20 @@ def retrieve_condition_name(condition):
     #     plt.savefig(os.path.join(im_dir, filename))
     
     return im
+
+
+def lfp_exists(patient, condition, placement):
+    try:
+        patient.lfp[condition][placement]
+    except:
+        return False
+    return True
+
+
+def pac_exists(patient, condition, placement_phase, placement_ampl):
+    try:
+        len(patient.pac[condition][placement_phase][placement_ampl])
+    except:
+        return True # if has not length - not empty - is PAC
+    return False
 
