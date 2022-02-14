@@ -242,6 +242,14 @@ def load_patient_from_pickle(filepath):
     return patient
 
 
+def copy_patient(patient: Patient):
+    new_patient = Patient(patient.name, patient.root_dir)
+    for attr in patient.__dict__.keys():
+        new_patient.__dict__[attr] = patient.__dict__[attr]
+    return new_patient
+        
+
+
 def create_pac_name(lfp_phase, lfp_amplitude):
     pac_name_components = ['PAC', lfp_phase.patient_name, 
                            lfp_phase.condition, 
@@ -276,4 +284,78 @@ def retrieve_condition_name(condition):
     movement = " ".join(name_components[2:])
     
     return day, ldopa, movement
+
+
+ def comodulogram(pac_matrix,
+                  beta_params,
+                  hfo_params,
+                  pvalues=None, 
+                  significant=False, 
+                  correction='None', 
+                  smooth=True, 
+                  sigma=1, 
+                  vmax=None, 
+                  ax=None, 
+                  savefig=False):
+        
+    if significant and pvalues is None:
+        raise ValueError("pvalues are necessary to show significant values")
+
+    if significant:
+
+        if correction == 'None':
+            zero_indeces = pvalues > 0.01
+
+        if correction == 'Multiple':
+
+            pvalues = pvalues.copy().flatten()
+            pvalues_shape = pvalues.shape
+
+            reject, pvalues_corrected, _, _ = multipletests(pvalues) # default Holm-Sidak method
+
+            # if we reject null-hypothesis, that is PAC is confirmed to be significant - padding zero everything else
+
+            reject = reject.reshape(pvalues_shape)
+            pvalues_corrected = pvalues_corrected.reshape(pvalues_shape)
+
+            zero_indeces = True ^ reject # XOR inverts boolean array, True if (True ^ False) and False if (True ^ True)
+
+        pac_matrix[zero_indeces] = 0     
+
+    f1, f2, step, bw = beta_params
+    xticks = np.arange(f1, f2 + step, step)
+
+    f1, f2, step, bw = hfo_params
+    yticks = np.arange(f1, f2 + step, step)
+
+    interpolation = 'gaussian' if smooth else 'none'
+    
+    imshow_kwargs = {'origin': 'lower', 
+                     'cmap': plt.cm.jet, 
+                     'aspect': 'auto', 
+                     'interpolation': interpolation, 
+                     'vmax': vmax, 
+                     'extent': [min(xticks) , max(xticks), min(yticks) ,max(yticks)]
+                    }
+    
+    if ax is None:
+        im = plt.imshow(pac_matrix, **imshow_kwargs)
+    
+    else:
+        im = ax.imshow(pac_matrix, **imshow_kwargs)
+
+        
+        
+
+    #plt.title(f"PAC ({self.method}); {self.patient_name} ; {self.condition}; \n [Phase] {self.phase_placement} ->  [Amplitude] {self.amplitude_placement}")
+    # if savefig:
+    #     filename = self.name + '.png'
+    #     im_dir = os.path.join(self.root_dir, 'im')
+    #     try:
+    #         os.mkdir(im_dir)
+    #     except OSError:
+    #         pass
+    #     plt.savefig(os.path.join(im_dir, filename))
+    
+    return im
 
