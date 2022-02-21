@@ -207,6 +207,21 @@ class LFP:
             self.show_fft(show_freqs=show_freqs, log=log, smooth=smooth, sigma=sigma)
             filtered_lfp = LFP(self.bp_filter(f1, f2, inplace=False, filter_order=filter_order), self.sf, 'Filtered LFP')
             filtered_lfp.show_fft(show_freqs=show_freqs, log=log, smooth=smooth, sigma=sigma)
+            
+            
+    def normalize(self, inplace=False):
+        """
+        Normalizes LFP data by its std
+        """
+        std = np.std(self.data)
+        if inplace:
+            self.data /= std
+        else:
+            new_lfp = self.copy()
+            new_lfp.data /= std
+            return new_lfp
+            
+        
         
         
     def show_signal(self, signal_length, new_figure=True, amplifier=1):
