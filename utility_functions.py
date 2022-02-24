@@ -240,7 +240,19 @@ def load_patient_from_pickle(filepath):
         patient = pickle.load(f, pickle.HIGHEST_PROTOCOL)
     patient.pac = defaultdict(lambda: defaultdict(lambda: defaultdict(dict)))
     return patient
-        
+
+
+def load_patient(patient_number):
+    with open("path_data.txt") as f:
+        data_dir = f.readline()
+    i = patient_number
+    p_dir = os.path.join(data_dir, f"Patient{i}")
+    print("Patient directory: ", p_dir)
+    p_pickle_filepath = os.path.join(p_dir, f"Patient{i}.pkl")
+    p = load_patient_from_pickle(p_pickle_filepath)
+    p.root_dir = p_dir
+    p.load_all_pacs(verbose=False)
+    return p
 
 
 def create_pac_name(lfp_phase, lfp_amplitude):
