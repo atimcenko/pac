@@ -14,6 +14,7 @@ import statsmodels.api as sm
 from sklearn.linear_model import LinearRegression
 
 from fooof import FOOOF
+import fooof
 
 import sys
 import os
