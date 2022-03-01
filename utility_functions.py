@@ -187,6 +187,15 @@ def shuffle_hfo_matrix(hfo_matrix, n_splits=3):
     return shuffled_hfo_matrix
 
 def generate_coupled_signal(f_p, f_a, K_p, K_a, xi, timepoints, noise_level=0.1, noise_type='pink', alpha=1):
+    """
+    Return x with shape of timepoints
+    f_p, f_a - frequencies for coupled oscillations
+    K_p and K_a are default amplitudes for phase and amplitude coupled oscillations
+    xi is coupling strength. The closer to 0, the stronger is phase-amplitude modulation
+    noise_type: pink, white-gaussian, white-uniform
+    alpha: recommended from 1 to 3 - coefficient for power law distribution noise (pink)
+    
+    """
     x_fp = K_p * np.sin(2 * np.pi * f_p * timepoints)
     A_fa = K_a/2 * ((1 - xi) * np.sin(2 * np.pi * f_p * timepoints) + xi + 1)
     x_fa = A_fa * np.sin(2 * np.pi * f_a * timepoints)
