@@ -305,6 +305,7 @@ def comodulogram(pac_matrix,
                   hfo_params,
                   pvalues=None, 
                   significant=False, 
+                  significance=0.01,
                   correction='None', 
                   smooth=True, 
                   sigma=1, 
@@ -318,7 +319,7 @@ def comodulogram(pac_matrix,
     if significant:
 
         if correction == 'None':
-            zero_indeces = pvalues > 0.01
+            zero_indeces = pvalues >= significance
 
         if correction == 'Multiple':
 
