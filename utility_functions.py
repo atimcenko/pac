@@ -251,7 +251,7 @@ def load_patient_from_pickle(filepath):
     return patient
 
 
-def load_patient(patient_number):
+def load_patient(patient_number, load_pac=True):
     with open("path_data.txt") as f:
         data_dir = f.readline()
     i = patient_number
@@ -260,7 +260,8 @@ def load_patient(patient_number):
     p_pickle_filepath = os.path.join(p_dir, f"Patient{i}.pkl")
     p = load_patient_from_pickle(p_pickle_filepath)
     p.root_dir = p_dir
-    p.load_all_pacs(verbose=False)
+    if load_pac:
+        p.load_all_pacs(verbose=False)
     return p
 
 
