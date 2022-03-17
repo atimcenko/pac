@@ -52,6 +52,8 @@ def main():
     
     confirm = input(f"Confirm PAC estimation for {patient_name}? y/n: ")
     
+    compute_diag = input(f"Compute (normal) PAC for {patient_name}? y/n: ")
+    
     compute_nondiag = input(f"Compute inter-electrode PAC for {patient_name}? y/n: ")
     
     if confirm != 'y':
@@ -87,52 +89,59 @@ def main():
     placements = patient.placements
 
     # first diagonal ones:
+    if compute_diag == 'y':
+        # DIAGONAL ELEMENTS (ONE ELECTRODE PAC)
+        for condition in conditions_2use:
+            print("Condition: ", condition)
+            for placement_phase in placements:
+                for placement_amplitude in placements:
+                    #print(f"Placements: {placement_phase} - {placement_amplitude}")
+                    # if phase is on the right "R" and ampl is "L" do not calculate PAC
+                    if placement_phase[0] != placement_amplitude[0]:
+                        continue 
 
-    # DIAGONAL ELEMENTS (ONE ELECTRODE PAC)
-    for condition in conditions_2use:
-        print("Condition: ", condition)
-        for placement_phase in placements:
-            for placement_amplitude in placements:
-                #print(f"Placements: {placement_phase} - {placement_amplitude}")
-                # if phase is on the right "R" and ampl is "L" do not calculate PAC
-                if placement_phase[0] != placement_amplitude[0]:
-                    continue 
-
-                # SKIP NON-DIAGONAL (INTER-ELECTRODE) ELEMENTS
-                if placement_phase != placement_amplitude:
-                    continue
-                
-                lfp_phase = patient.lfp[condition][placement_phase]
-                lfp_amplitude = patient.lfp[condition][placement_amplitude]
-                
-                # checking if file already exists
-                pac_filename = create_pac_name(lfp_phase, lfp_amplitude) + ".pkl"
-                print(pac_filename)
-                if os.path.isfile(os.path.join(patient.root_dir, "pac", pac_filename)):
-                    print(f"{pac_filename} already exists")
-                    continue
+                    # SKIP NON-DIAGONAL (INTER-ELECTRODE) ELEMENTS
+                    if placement_phase != placement_amplitude:
+                        continue
                     
-                # pac calculation
-                t0 = time.perf_counter()  
-                pac = MyPAC(beta_params=(5, 48, 1, 2), hfo_params=(40, 500, 20, 0), verbose=True, multiprocess=False, use_numba=True)
-                pac.filter_fit_surrogates(lfp_phase, lfp_amplitude, n_surrogates=700, n_splits=1)
-                print(f"Surrogate estimation completed in {round(time.perf_counter() - t0)}")
-                pac.save(patient.root_dir)
-                
+                    lfp_phase = patient.lfp[condition][placement_phase]
+                    lfp_amplitude = patient.lfp[condition][placement_amplitude]
+                    
+                    # checking if file already exists
+                    pac_filename = create_pac_name(lfp_phase, lfp_amplitude) + ".pkl"
+                    print(pac_filename)
+                    if os.path.isfile(os.path.join(patient.root_dir, "pac", pac_filename)):
+                        print(f"{pac_filename} already exists")
+                        continue
+                        
+                    # pac calculation
+                    t0 = time.perf_counter()  
+                    pac = MyPAC(beta_params=(5, 48, 1, 2), hfo_params=(40, 500, 20, 0), verbose=True, multiprocess=False, use_numba=True)
+                    pac.filter_fit_surrogates(lfp_phase, lfp_amplitude, n_surrogates=700, n_splits=1)
+                    print(f"Surrogate estimation completed in {round(time.perf_counter() - t0)}")
+                    pac.save(patient.root_dir)
+                    
     if compute_nondiag != 'y':
         print("Exiting...")
         return
 
     # NON-DIAGONAL ELEMENTS (INTER-ELECTRODE PAC)
     print("Starting estimating inter-electrode PAC")
+    
+    cross_placements = ["L4-3A", "L4-3B", "L4-3C", "L2A-3A", "L2B-3B", "L2C-3C", "L1-2A", "L1-2B", "L1-2C",\
+                        "R4-3A", "R4-3B", "R4-3C", "R2A-3A", "R2B-3B", "R2C-3C", "R1-2A", "R1-2B", "R1-2C"]
 
-    for placement_phase in placements:
-        for placement_amplitude in placements:
+    for placement_phase in cross_placements:
+        for placement_amplitude in cross_placements:
             for condition in conditions_2use:
+                
+                # only considering Rest OFF vs ON
+                if "Rest" not in condition:
+                    continue
                 
                 # if phase is on the right "R" and ampl is "L" do not calculate PAC
                 if placement_phase[0] != placement_amplitude[0]:
-                    continue 
+                    continue
                 
                 lfp_phase = patient.lfp[condition][placement_phase]
                 lfp_amplitude = patient.lfp[condition][placement_amplitude]
@@ -145,8 +154,9 @@ def main():
                     continue
                     
                 # pac calculation
-                t0 = time.perf_counter()  
-                pac = MyPAC(beta_params=(5, 48, 1, 2), hfo_params=(40, 500, 20, 0), verbose=True, multiprocess=False, use_numba=True)
+                t0 = time.perf_counter()
+                """ATTENTION! CHANGED PARAMS FOR CROSS-ELECTRODE PAC ESTIMATION FOR FASTER PERFORMANCE"""
+                pac = MyPAC(beta_params=(10, 36, 1, 2), hfo_params=(140, 500, 20, 0), verbose=True, multiprocess=False, use_numba=True)
                 pac.filter_fit_surrogates(lfp_phase, lfp_amplitude, n_surrogates=700, n_splits=1)
                 print(f"Surrogate estimation completed in {round(time.perf_counter() - t0)}")
                 pac.save(patient.root_dir)
