@@ -75,7 +75,7 @@ def calculate_surrogates_njit(beta_matrix, hfo_matrix, n_surrogates, n_splits=3)
         else:
             shuffled_hfo_matrix = shuffle_hfo_matrix_njit(hfo_matrix, n_splits)
         surrogate_pac_matrices[k, :, :] = calculate_PAC_matrix_njit(beta_matrix, shuffled_hfo_matrix)
-        print(k)
+        #print(k)
     return surrogate_pac_matrices
 
 
