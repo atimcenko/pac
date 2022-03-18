@@ -131,6 +131,35 @@ def main():
     cross_placements = ["L4-3A", "L4-3B", "L4-3C", "L2A-3A", "L2B-3B", "L2C-3C", "L1-2A", "L1-2B", "L1-2C",\
                         "R4-3A", "R4-3B", "R4-3C", "R2A-3A", "R2B-3B", "R2C-3C", "R1-2A", "R1-2B", "R1-2C"]
 
+    
+    # Counting the number of total cross-electrode PACs to estimate
+    n_left = 0
+    for placement_phase in cross_placements:
+        for placement_amplitude in cross_placements:
+            for condition in conditions_2use:
+                
+                # only considering Rest OFF vs ON
+                if "Rest" not in condition:
+                    continue
+                
+                # if phase is on the right "R" and ampl is "L" do not calculate PAC
+                if placement_phase[0] != placement_amplitude[0]:
+                    continue
+                
+                lfp_phase = patient.lfp[condition][placement_phase]
+                lfp_amplitude = patient.lfp[condition][placement_amplitude]
+                
+                # checking if file already exists
+                pac_filename = create_pac_name(lfp_phase, lfp_amplitude) + ".pkl"
+                print(pac_filename)
+                if os.path.isfile(os.path.join(patient.root_dir, "pac", pac_filename)):
+                    print(f"{pac_filename} already exists")
+                    continue
+                    
+                n_left += 1
+    
+    
+    counter = 0
     for placement_phase in cross_placements:
         for placement_amplitude in cross_placements:
             for condition in conditions_2use:
@@ -160,6 +189,13 @@ def main():
                 pac.filter_fit_surrogates(lfp_phase, lfp_amplitude, n_surrogates=700, n_splits=1)
                 print(f"Surrogate estimation completed in {round(time.perf_counter() - t0)}")
                 pac.save(patient.root_dir)
+                
+                counter += 1
+                
+                print(f"Calculated {counter} / {n_left} PACs ")
+                estimation_time = round(time.perf_counter() - t0)
+                minutes_left = (int(estimation_time) * n_left) % 60
+                print(f"Approximate time left: {minutes_left // 60} H {minutes_left % 60} min")
 
 if __name__ == '__main__':
     main()
