@@ -186,7 +186,7 @@ def main():
                 
                 print(f"Calculated {counter} / {n_left} PACs ")
                 estimation_time = round(time.perf_counter() - t0)
-                minutes_left = (int(estimation_time) * n_left) // 60
+                minutes_left = (int(estimation_time) * (n_left - counter)) // 60
                 print(f"Approximate time left: {minutes_left // 60} H {minutes_left % 60} min")
 
 if __name__ == '__main__':
