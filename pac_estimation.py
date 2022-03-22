@@ -50,13 +50,12 @@ def main():
     patient_number = input("Enter patient number: ")
     patient_name = "Patient" + patient_number
     
-    confirm = input(f"Confirm PAC estimation for {patient_name}? y/n: ")
+    confirm = input(f"Confirm PAC estimation for {patient_name}? y/n: ") == 'y'
+    compute_diag = input(f"Compute (normal) PAC for {patient_name}? y/n: ") == 'y'
+    compute_nondiag = input(f"Compute cross-electrode PAC for {patient_name}? y/n: ") == 'y'
+    multiprocess = input("Use concurrent.futures multiprocessing? (100% LOADS CPU) y/n: ") == 'y'
     
-    compute_diag = input(f"Compute (normal) PAC for {patient_name}? y/n: ")
-    
-    compute_nondiag = input(f"Compute inter-electrode PAC for {patient_name}? y/n: ")
-    
-    if confirm != 'y':
+    if not confirm':
         print("Exiting...")
         return
     
@@ -89,7 +88,7 @@ def main():
     placements = patient.placements
 
     # first diagonal ones:
-    if compute_diag == 'y':
+    if compute_diag:
         # DIAGONAL ELEMENTS (ONE ELECTRODE PAC)
         for condition in conditions_2use:
             print("Condition: ", condition)
@@ -121,12 +120,12 @@ def main():
                     print(f"Surrogate estimation completed in {round(time.perf_counter() - t0)}")
                     pac.save(patient.root_dir)
                     
-    if compute_nondiag != 'y':
+    if not compute_nondiag:
         print("Exiting...")
         return
 
-    # NON-DIAGONAL ELEMENTS (INTER-ELECTRODE PAC)
-    print("Starting estimating inter-electrode PAC...")
+    # NON-DIAGONAL ELEMENTS (CROSS-ELECTRODE PAC)
+    print("Starting estimating cross-electrode PAC...")
     
     cross_placements = ["L4-3A", "L4-3B", "L4-3C", "L2A-3A", "L2B-3B", "L2C-3C", "L1-2A", "L1-2B", "L1-2C",\
                         "R4-3A", "R4-3B", "R4-3C", "R2A-3A", "R2B-3B", "R2C-3C", "R1-2A", "R1-2B", "R1-2C"]
@@ -177,7 +176,7 @@ def main():
                 # pac calculation
                 t0 = time.perf_counter()
                 """ATTENTION! CHANGED PARAMS FOR CROSS-ELECTRODE PAC ESTIMATION FOR FASTER PERFORMANCE"""
-                pac = MyPAC(beta_params=(10, 36, 1, 2), hfo_params=(140, 500, 20, 0), verbose=False, multiprocess=True, use_numba=True)
+                pac = MyPAC(beta_params=(10, 36, 1, 2), hfo_params=(140, 500, 20, 0), verbose=False, multiprocess=multiprocess, use_numba=True)
                 pac.filter_fit_surrogates(lfp_phase, lfp_amplitude, n_surrogates=700, n_splits=1)
                 print(f"Surrogate estimation completed in {round(time.perf_counter() - t0)}")
                 pac.save(patient.root_dir)
