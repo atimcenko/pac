@@ -1,12 +1,33 @@
 import numpy as np
+import pandas as pd
+
+#!pip install pyEDFlib
+import pyedflib
+#!pip install ipympl
+
 from scipy.fftpack import fft, ifft, fftfreq
 from scipy import signal
+from scipy.ndimage.filters import gaussian_filter1d, gaussian_filter
 from scipy.stats import binned_statistic, entropy, norm
+from statsmodels.stats.multitest import multipletests
+import statsmodels.api as sm
 from sklearn.linear_model import LinearRegression
 
+import sys
+import os
+import time
+#import pickle
 import dill as pickle
+
+import concurrent.futures
 from numba import njit, prange
+
 from tqdm.notebook import tqdm
+from collections import defaultdict
+import itertools
+
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 def extract_phase(beta):
@@ -166,7 +187,6 @@ def shuffle_hfo_matrix(hfo_matrix, n_splits=3):
     return shuffled_hfo_matrix
 
 def generate_coupled_signal(f_p, f_a, K_p, K_a, xi, timepoints, noise_level=0.1, noise_type='pink', alpha=1):
-    
     x_fp = K_p * np.sin(2 * np.pi * f_p * timepoints)
     A_fa = K_a/2 * ((1 - xi) * np.sin(2 * np.pi * f_p * timepoints) + xi + 1)
     x_fa = A_fa * np.sin(2 * np.pi * f_a * timepoints)
@@ -222,6 +242,19 @@ def load_patient_from_pickle(filepath):
     return patient
 
 
+def load_patient(patient_number):
+    with open("path_data.txt") as f:
+        data_dir = f.readline()
+    i = patient_number
+    p_dir = os.path.join(data_dir, f"Patient{i}")
+    print("Patient directory: ", p_dir)
+    p_pickle_filepath = os.path.join(p_dir, f"Patient{i}.pkl")
+    p = load_patient_from_pickle(p_pickle_filepath)
+    p.root_dir = p_dir
+    p.load_all_pacs(verbose=False)
+    return p
+
+
 def create_pac_name(lfp_phase, lfp_amplitude):
     pac_name_components = ['PAC', lfp_phase.patient_name, 
                            lfp_phase.condition, 
@@ -231,4 +264,119 @@ def create_pac_name(lfp_phase, lfp_amplitude):
     name = '_'.join(pac_name_components)
     return name
 
+def retrieve_pac_name(pac_filename):
+    """ Returns patient_name, condition, phase_placement, ampl_placement, duration"""
+    comps = pac_filename.split("_")
+    patient_name, condition = comps[1], comps[2] # 0 stands for PAC
+    phase_placement, ampl_placement = comps[3], comps[4]
+    duration = comps[5][:-4]
+    return patient_name, condition, phase_placement, ampl_placement, duration
+    
+
+
+def create_condition_name(day, ldopa, movement):
+    return " ".join([day, ldopa, movement])
+
+
+def retrieve_condition_name(condition):
+    """
+    1Day OFF RH (Com)
+    
+    """
+    name_components = condition.split(" ")
+    day = name_components[0]
+    ldopa = name_components[1]
+    movement = " ".join(name_components[2:])
+    
+    return day, ldopa, movement
+
+
+def comodulogram(pac_matrix,
+                  beta_params,
+                  hfo_params,
+                  pvalues=None, 
+                  significant=False, 
+                  correction='None', 
+                  smooth=True, 
+                  sigma=1, 
+                  vmax=None, 
+                  ax=None, 
+                  savefig=False):
+        
+    if significant and pvalues is None:
+        raise ValueError("pvalues are necessary to show significant values")
+
+    if significant:
+
+        if correction == 'None':
+            zero_indeces = pvalues > 0.01
+
+        if correction == 'Multiple':
+
+            pvalues = pvalues.copy().flatten()
+            pvalues_shape = pvalues.shape
+
+            reject, pvalues_corrected, _, _ = multipletests(pvalues) # default Holm-Sidak method
+
+            # if we reject null-hypothesis, that is PAC is confirmed to be significant - padding zero everything else
+
+            reject = reject.reshape(pvalues_shape)
+            pvalues_corrected = pvalues_corrected.reshape(pvalues_shape)
+
+            zero_indeces = True ^ reject # XOR inverts boolean array, True if (True ^ False) and False if (True ^ True)
+
+        pac_matrix[zero_indeces] = 0     
+
+    f1, f2, step, bw = beta_params
+    xticks = np.arange(f1, f2 + step, step)
+
+    f1, f2, step, bw = hfo_params
+    yticks = np.arange(f1, f2 + step, step)
+
+    interpolation = 'gaussian' if smooth else 'none'
+    
+    imshow_kwargs = {'origin': 'lower', 
+                     'cmap': plt.cm.jet, 
+                     'aspect': 'auto', 
+                     'interpolation': interpolation, 
+                     'vmax': vmax, 
+                     'extent': [min(xticks) , max(xticks), min(yticks) ,max(yticks)]
+                    }
+    
+    if ax is None:
+        im = plt.imshow(pac_matrix, **imshow_kwargs)
+    
+    else:
+        im = ax.imshow(pac_matrix, **imshow_kwargs)
+
+        
+        
+
+    #plt.title(f"PAC ({self.method}); {self.patient_name} ; {self.condition}; \n [Phase] {self.phase_placement} ->  [Amplitude] {self.amplitude_placement}")
+    # if savefig:
+    #     filename = self.name + '.png'
+    #     im_dir = os.path.join(self.root_dir, 'im')
+    #     try:
+    #         os.mkdir(im_dir)
+    #     except OSError:
+    #         pass
+    #     plt.savefig(os.path.join(im_dir, filename))
+    
+    return im
+
+
+def lfp_exists(patient, condition, placement):
+    try:
+        patient.lfp[condition][placement]
+    except:
+        return False
+    return True
+
+
+def pac_exists(patient, condition, placement_phase, placement_ampl):
+    try:
+        len(patient.pac[condition][placement_phase][placement_ampl])
+    except:
+        return True # if has not length - not empty - is PAC
+    return False
 
