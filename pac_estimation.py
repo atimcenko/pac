@@ -55,7 +55,7 @@ def main():
     compute_nondiag = input(f"Compute cross-electrode PAC for {patient_name}? y/n: ") == 'y'
     multiprocess = input("Use concurrent.futures multiprocessing? (100% LOADS CPU) y/n: ") == 'y'
     
-    if not confirm':
+    if not confirm:
         print("Exiting...")
         return
     
