@@ -281,7 +281,6 @@ def retrieve_pac_name(pac_filename):
     phase_placement, ampl_placement = comps[3], comps[4]
     duration = comps[5][:-4]
     return patient_name, condition, phase_placement, ampl_placement, duration
-    
 
 
 def create_condition_name(day, ldopa, movement):
