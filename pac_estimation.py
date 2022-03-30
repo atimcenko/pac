@@ -115,7 +115,7 @@ def main():
                         
                     # pac calculation
                     t0 = time.perf_counter()  
-                    pac = MyPAC(beta_params=(5, 48, 1, 2), hfo_params=(40, 500, 20, 0), verbose=True, multiprocess=False, use_numba=True)
+                    pac = MyPAC(beta_params=(5, 48, 1, 2), hfo_params=(40, 500, 20, 0), verbose=True, multiprocess=bool(multiprocess), use_numba=True)
                     pac.filter_fit_surrogates(lfp_phase, lfp_amplitude, n_surrogates=700, n_splits=1)
                     print(f"Surrogate estimation completed in {round(time.perf_counter() - t0)}")
                     pac.save(patient.root_dir)
@@ -176,7 +176,7 @@ def main():
                 # pac calculation
                 t0 = time.perf_counter()
                 """ATTENTION! CHANGED PARAMS FOR CROSS-ELECTRODE PAC ESTIMATION FOR FASTER PERFORMANCE"""
-                pac = MyPAC(beta_params=(10, 36, 1, 2), hfo_params=(140, 500, 20, 0), verbose=False, multiprocess=multiprocess, use_numba=True)
+                pac = MyPAC(beta_params=(10, 36, 1, 2), hfo_params=(140, 500, 20, 0), verbose=False, multiprocess=bool(multiprocess), use_numba=True)
                 pac.filter_fit_surrogates(lfp_phase, lfp_amplitude, n_surrogates=700, n_splits=1)
                 print(f"Surrogate estimation completed in {round(time.perf_counter() - t0)}")
                 pac.save(patient.root_dir)
