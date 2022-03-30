@@ -53,7 +53,7 @@ def main():
     confirm = input(f"Confirm PAC estimation for {patient_name}? y/n: ") == 'y'
     compute_diag = input(f"Compute (normal) PAC for {patient_name}? y/n: ") == 'y'
     compute_nondiag = input(f"Compute cross-electrode PAC for {patient_name}? y/n: ") == 'y'
-    multiprocess = input("Use concurrent.futures multiprocessing? (100% LOADS CPU) y/n: ") == 'y'
+    if_multiprocess = input("Use concurrent.futures multiprocessing? (100% LOADS CPU) y/n: ") == 'y'
     
     if not confirm:
         print("Exiting...")
@@ -115,7 +115,7 @@ def main():
                         
                     # pac calculation
                     t0 = time.perf_counter()  
-                    pac = MyPAC(beta_params=(5, 48, 1, 2), hfo_params=(40, 500, 20, 0), verbose=True, multiprocess=bool(multiprocess), use_numba=True)
+                    pac = MyPAC(beta_params=(5, 48, 1, 2), hfo_params=(40, 500, 20, 0), verbose=True, multiprocess=False, use_numba=True)
                     pac.filter_fit_surrogates(lfp_phase, lfp_amplitude, n_surrogates=700, n_splits=1)
                     print(f"Surrogate estimation completed in {round(time.perf_counter() - t0)}")
                     pac.save(patient.root_dir)
@@ -163,6 +163,10 @@ def main():
                 if placement_phase[0] != placement_amplitude[0]:
                     continue
                 
+                # checking if it is same-electrode PAC
+                if placement_phase == placement_amplitude:
+                    continue
+                
                 lfp_phase = patient.lfp[condition][placement_phase]
                 lfp_amplitude = patient.lfp[condition][placement_amplitude]
                 
@@ -176,7 +180,7 @@ def main():
                 # pac calculation
                 t0 = time.perf_counter()
                 """ATTENTION! CHANGED PARAMS FOR CROSS-ELECTRODE PAC ESTIMATION FOR FASTER PERFORMANCE"""
-                pac = MyPAC(beta_params=(10, 36, 1, 2), hfo_params=(140, 500, 20, 0), verbose=False, multiprocess=bool(multiprocess), use_numba=True)
+                pac = MyPAC(beta_params=(10, 36, 1, 2), hfo_params=(140, 500, 20, 0), verbose=True, multiprocess=bool(if_multiprocess), use_numba=True)
                 pac.filter_fit_surrogates(lfp_phase, lfp_amplitude, n_surrogates=700, n_splits=1)
                 print(f"Surrogate estimation completed in {round(time.perf_counter() - t0)}")
                 pac.save(patient.root_dir)
