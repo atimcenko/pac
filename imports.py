@@ -9,6 +9,7 @@ from scipy.fftpack import fft, ifft, fftfreq
 from scipy import signal as sg
 from scipy.ndimage.filters import gaussian_filter1d, gaussian_filter
 from scipy.stats import binned_statistic, entropy, norm
+from scipy import stats
 from statsmodels.stats.multitest import multipletests
 import statsmodels.api as sm
 from sklearn.linear_model import LinearRegression
