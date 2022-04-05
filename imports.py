@@ -48,5 +48,6 @@ from utils_io import *
 # %run lfp_class.py
 # %run pac_class.py
 # %run patient_class.py
+from utils_bigraph import *
 
 print("Succesfully imported libraries and modules\n")
