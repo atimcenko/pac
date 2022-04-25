@@ -6,7 +6,7 @@ import pyedflib
 #!pip install ipympl
 
 from scipy.fftpack import fft, ifft, fftfreq
-from scipy import signal as sg
+from scipy import signal
 from scipy.ndimage.filters import gaussian_filter1d, gaussian_filter
 from scipy.stats import binned_statistic, entropy, norm
 from scipy import stats
