@@ -160,7 +160,7 @@ def get_power(y, power_type='p', p=2):
         return np.std(y ** p) ** (1/p)
 
     
-def get_beta_power(lfp: LFP, freqs=(10, 35), power_type='max', p=2):
+def get_beta_power(lfp: LFP, freqs=(14, 35), power_type='max', p=2):
 
     # dividing by std
     lfp_data = lfp.data.copy()
@@ -181,10 +181,19 @@ def get_beta_power(lfp: LFP, freqs=(10, 35), power_type='max', p=2):
     f0, f1 = freqs
     final_mask = (f[mask1] >= f0) & (f[mask1] <= f1)
     
-    # calculating power
-    beta_power = get_power(y_hat[final_mask], power_type, p)
-    return beta_power
+    n_peaks = fm.peak_params_.shape[0]
+    peak_freqs = fm.peak_params_[:, 0]
+    peak_heights = fm.peak_params_[:, 1]
 
+    #beta_power = np.max(peak_heights[(peak_freqs >= freqs[0]) & (peak_freqs <= freqs[1])])
+    if n_peaks == 0:
+        return 0 
+    peak_powers = np.zeros(n_peaks)
+    for i in range(n_peaks):
+        peak_freq = fm.peak_params_[i, 0]
+        if (peak_freq >= freqs[0]) and (peak_freq <= freqs[1]):
+            peak_powers[i] = fm.peak_params_[i, 1]   
+    return np.max(peak_powers)
 
 def get_hfo_power(lfp: LFP, freqs=(160, 500), power_type='max', p=2):
     
