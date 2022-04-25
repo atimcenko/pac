@@ -284,6 +284,7 @@ def retrieve_pac_name(pac_filename):
 
 
 def create_condition_name(day, ldopa, movement):
+    """Simply joins input data. So it has to be matched like "5Day", "OFF", "RH Move 180sec" -> 5Day OFF RH Move 180sec"""
     return " ".join([day, ldopa, movement])
 
 
