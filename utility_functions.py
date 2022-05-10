@@ -313,6 +313,8 @@ def comodulogram(pac_matrix,
                   vmax=None, 
                   ax=None, 
                   savefig=False):
+    
+    pac_matrix = pac_matrix.copy()
         
     if significant and pvalues is None:
         raise ValueError("pvalues are necessary to show significant values")
