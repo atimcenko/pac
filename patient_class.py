@@ -252,15 +252,17 @@ class Patient:
         return self.annotations
 
     
-    def merge_conditions(self, conditions_to_merge:list, new_condition_name, total_duration=180):
+    def merge_conditions(self, conditions_to_merge:list, new_condition_name, total_duration=180, remove_merged=False):
         """
         Gets list of condition names as input and for each placement:
         1) Merges them creating and adding the corresponding LFP with new_condition_name for Patient
         2) Makes sure the total duration of LFP is equals total_duration
+        3) Deletes unused LFPs (optional). Removes corresponding keys in self.conditions (all conditions_to_merge)
 
         * Make sure LFPs for conditions_to_merge are computed!
         * Make sure there is data of necessary duration (sum(durations) >= total_duration)
         * If len(conditions_to_merge) == 1: skips the first step
+        
         """
         self.conditions.add(new_condition_name)
         for placement in self.placements:
@@ -272,6 +274,13 @@ class Patient:
             if placement == 'R2A-3A':
                 verbose = True
             self.add_lfp(lfp, verbose=verbose)
+        
+        # removing unused LFPs
+        if remove_merged:
+            for condition in conditions_to_merge:
+                self.conditions.remove(condition)
+                for placement in self.placements:
+                    self.remove_lfp(condition, placement)
 
             
         
@@ -298,6 +307,14 @@ class Patient:
         self.lfp[condition][placement] = lfp
         if verbose: print("Updating condition")
         self.conditions.add(condition)
+        
+    
+    def remove_lfp(self, condition, placement):
+        """
+        Removes LFP from the patient.lfp defaultdict to free up space
+        """
+        self.lfp[condition][placement] = None
+        
         
         
     def add_lfp_deprecated(self, data, sf, condition, placement):
