@@ -324,7 +324,7 @@ def get_node_colors(patient,
     return colors_left + colors_right
 
 
-def draw_bigraph(G, ax, colors=None):
+def draw_bigraph(G, ax, colors=None, weight_divider=8):
     cross_placements = ["L4-3A", "L4-3B", "L4-3C", "L2A-3A", "L2B-3B", "L2C-3C", "L1-2A", "L1-2B", "L1-2C", 
                         "R4-3A", "R4-3B", "R4-3C", "R2A-3A", "R2B-3B", "R2C-3C", "R1-2A", "R1-2B", "R1-2C"]
     n = len(cross_placements)
@@ -361,7 +361,7 @@ def draw_bigraph(G, ax, colors=None):
                      pos=pos, 
                      arrows=True, 
                      arrowstyle='->', 
-                     width=weights / 8, 
+                     width=weights / weight_divider, 
                      node_size=500, 
                      node_color=node_color, alpha=0.8)
     
